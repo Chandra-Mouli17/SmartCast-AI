@@ -11,3 +11,9 @@ export const mockSensorData: SensorData = {
   temperature: 36.8,
   movement: 20,
 }
+export const mockDevice = {
+  connected: true,
+  deviceId: 'SC-CAST-001',
+  signalStrength: 92,
+  battery: 87,
+}

@@ -35,3 +35,70 @@
   color: var(--critical);
   background: rgba(255, 77, 77, 0.12);
 }
+.device-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--normal);
+  flex-shrink: 0;
+}
+
+.device-dot.connected {
+  background: var(--normal);
+}
+
+.device-dot.disconnected {
+  background: var(--critical);
+}
+.device-info {
+  margin-top: 18px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.device-info h2 {
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.device-info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.device-info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.device-info-item svg {
+  color: var(--primary);
+}
+
+.device-info-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.device-info-item span {
+  font-size: 9px;
+}
+
+.device-info-item strong {
+  color: var(--text);
+  font-size: 12px;
+}
+
+.device-id {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 9px;
+}

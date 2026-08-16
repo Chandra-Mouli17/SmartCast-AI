@@ -47,3 +47,18 @@ export function getCastStatus(
     message: 'Your cast is being monitored normally.',
   }
 }
+export function getSensorLevel(
+  value: number,
+  warningThreshold: number,
+  criticalThreshold: number,
+): StatusLevel {
+  if (value >= criticalThreshold) {
+    return 'critical'
+  }
+
+  if (value >= warningThreshold) {
+    return 'warning'
+  }
+
+  return 'normal'
+}

@@ -1,11 +1,16 @@
 import {
   Activity,
+  Battery,
   Check,
   Droplets,
   Gauge,
+  Signal,
   Thermometer,
 } from 'lucide-react'
-import { mockSensorData } from '../data/mockSensorData'
+import {
+  mockSensorData,
+  mockDevice,
+} from '../data/mockSensorData'
 
 function Monitoring() {
   const {
@@ -19,15 +24,28 @@ function Monitoring() {
     <div className="monitoring">
       <div className="page-header">
         <p className="eyebrow">CAST MONITORING</p>
+
         <h1>Monitoring</h1>
+
         <p className="page-subtitle">
           Live sensor status
         </p>
       </div>
 
       <div className="device-status">
-        <span className="device-dot" />
-        Device connected
+        <span
+          className={`device-dot ${
+            mockDevice.connected
+              ? 'connected'
+              : 'disconnected'
+          }`}
+        />
+
+        <strong>
+          {mockDevice.connected
+            ? 'DEVICE CONNECTED'
+            : 'DEVICE DISCONNECTED'}
+        </strong>
       </div>
 
       <div className="monitoring-list">
@@ -84,6 +102,36 @@ function Monitoring() {
         />
       </div>
 
+      <div className="device-info">
+        <h2>Device information</h2>
+
+        <div className="device-info-row">
+          <div className="device-info-item">
+            <Signal size={15} />
+            <div>
+              <span>Signal</span>
+              <strong>
+                {mockDevice.signalStrength}%
+              </strong>
+            </div>
+          </div>
+
+          <div className="device-info-item">
+            <Battery size={15} />
+            <div>
+              <span>Battery</span>
+              <strong>
+                {mockDevice.battery}%
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <p className="device-id">
+          Device ID: {mockDevice.deviceId}
+        </p>
+      </div>
+
       <p className="simulation-note">
         Simulated data for development
       </p>
@@ -114,7 +162,9 @@ function MonitoringCard({
         <div>
           <h2>{name}</h2>
 
-          <span className={`monitoring-status ${level}`}>
+          <span
+            className={`monitoring-status ${level}`}
+          >
             {level === 'normal' && (
               <>
                 <Check size={12} />
