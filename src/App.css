@@ -1,0 +1,37 @@
+.monitoring-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.monitoring-status.normal {
+  color: var(--normal);
+}
+
+.monitoring-status.warning {
+  color: var(--warning);
+}
+
+.monitoring-status.critical {
+  color: var(--critical);
+}
+
+.monitoring-card.warning {
+  border-color: rgba(255, 181, 46, 0.35);
+}
+
+.monitoring-card.critical {
+  border-color: rgba(255, 77, 77, 0.4);
+}
+
+.monitoring-card.warning .monitoring-icon {
+  color: var(--warning);
+  background: rgba(255, 181, 46, 0.12);
+}
+
+.monitoring-card.critical .monitoring-icon {
+  color: var(--critical);
+  background: rgba(255, 77, 77, 0.12);
+}
