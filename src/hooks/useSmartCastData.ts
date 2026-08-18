@@ -3,6 +3,7 @@ import { getDeviceStatus } from '../services/smartCastApi'
 import type { DeviceStatusResponse } from '../services/smartCastApi'
 
 const DEVICE_ID = 'SC-CAST-001'
+const REFRESH_INTERVAL = 5000
 
 export function useSmartCastData() {
   const [data, setData] = useState<DeviceStatusResponse | null>(null)
@@ -10,21 +11,40 @@ export function useSmartCastData() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    let active = true
+
     async function loadData() {
       try {
         const response = await getDeviceStatus(DEVICE_ID)
 
-        setData(response)
-        setError(null)
+        if (active) {
+          setData(response)
+          setError(null)
+        }
       } catch (err) {
         console.error('Failed to load SmartCast data:', err)
-        setError('Unable to connect to SmartCast backend')
+
+        if (active) {
+          setError('Unable to connect to SmartCast backend')
+        }
       } finally {
-        setLoading(false)
+        if (active) {
+          setLoading(false)
+        }
       }
     }
 
     loadData()
+
+    const interval = setInterval(
+      loadData,
+      REFRESH_INTERVAL,
+    )
+
+    return () => {
+      active = false
+      clearInterval(interval)
+    }
   }, [])
 
   return {
