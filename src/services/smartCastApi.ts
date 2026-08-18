@@ -79,3 +79,24 @@ export function getDeviceAlerts(deviceId: string) {
     `/devices/${deviceId}/alerts`,
   )
 }
+export interface CastHealth {
+  score: number
+  pressureScore: number
+  humidityScore: number
+  temperatureScore: number
+  movementScore: number
+  reasons: string[]
+}
+
+export interface DeviceHealthResponse {
+  success: boolean
+  deviceId: string
+  health: CastHealth
+  createdAt: string
+}
+
+export function getDeviceHealth(deviceId: string) {
+  return request<DeviceHealthResponse>(
+    `/devices/${deviceId}/health`,
+  )
+}
