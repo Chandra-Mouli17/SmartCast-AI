@@ -7,70 +7,41 @@ import {
   Gauge,
   Thermometer,
 } from 'lucide-react'
-import { mockSensorData } from '../data/mockSensorData'
+import { useSmartCastAlerts } from '../hooks/useSmartCastAlerts'
+import type { SensorAlert } from '../services/smartCastApi'
 
 function Alerts() {
-  const {
-    pressure,
-    humidity,
-    temperature,
-    movement,
-  } = mockSensorData
+  const { data, loading, error } = useSmartCastAlerts()
 
-  const alerts = []
-
-  if (pressure >= 85) {
-    alerts.push({
-      type: pressure >= 95 ? 'critical' : 'warning',
-      icon: <Gauge size={18} />,
-      title:
-        pressure >= 95
-          ? 'Critical pressure detected'
-          : 'High pressure detected',
-      message: `Pressure is currently ${pressure}%.`,
-      time: 'Just now',
-    })
+  if (loading) {
+    return (
+      <div className="alerts">
+        <div className="page-header">
+          <p className="eyebrow">CAST MONITORING</p>
+          <h1>Alerts</h1>
+          <p className="page-subtitle">
+            Loading SmartCast alerts...
+          </p>
+        </div>
+      </div>
+    )
   }
 
-  if (humidity >= 70) {
-    alerts.push({
-      type: humidity >= 85 ? 'critical' : 'warning',
-      icon: <Droplets size={18} />,
-      title:
-        humidity >= 85
-          ? 'Critical humidity detected'
-          : 'High humidity detected',
-      message: `Humidity is currently ${humidity}%.`,
-      time: 'Just now',
-    })
+  if (error || !data) {
+    return (
+      <div className="alerts">
+        <div className="page-header">
+          <p className="eyebrow">CAST MONITORING</p>
+          <h1>Alerts</h1>
+          <p className="page-subtitle">
+            Unable to connect to SmartCast backend
+          </p>
+        </div>
+      </div>
+    )
   }
 
-  if (temperature >= 37.5) {
-    alerts.push({
-      type: temperature >= 39 ? 'critical' : 'warning',
-      icon: <Thermometer size={18} />,
-      title:
-        temperature >= 39
-          ? 'Critical temperature detected'
-          : 'High temperature detected',
-      message: `Temperature is currently ${temperature}°C.`,
-      time: 'Just now',
-    })
-  }
-
-  if (movement >= 70) {
-    alerts.push({
-      type: movement >= 90 ? 'critical' : 'warning',
-      icon: <Activity size={18} />,
-      title:
-        movement >= 90
-          ? 'Critical movement detected'
-          : 'Unusual movement detected',
-      message: 'Increased movement was detected.',
-      time: 'Just now',
-    })
-  }
-
+  const alerts = data.alerts
   const hasAlerts = alerts.length > 0
 
   return (
@@ -130,21 +101,40 @@ function Alerts() {
 
         {alerts.map((alert, index) => (
           <AlertCard
-            key={`${alert.title}-${index}`}
-            type={alert.type as AlertCardProps['type']}
-            icon={alert.icon}
+            key={`${alert.type}-${index}`}
+            type={alert.severity}
+            icon={getAlertIcon(alert)}
             title={alert.title}
             message={alert.message}
-            time={alert.time}
+            time="Just now"
           />
         ))}
       </div>
 
       <p className="simulation-note">
-        Simulated alerts for development
+        Live alerts from SmartCast backend
       </p>
     </div>
   )
+}
+
+function getAlertIcon(alert: SensorAlert) {
+  switch (alert.type) {
+    case 'pressure':
+      return <Gauge size={18} />
+
+    case 'humidity':
+      return <Droplets size={18} />
+
+    case 'temperature':
+      return <Thermometer size={18} />
+
+    case 'movement':
+      return <Activity size={18} />
+
+    default:
+      return <AlertTriangle size={18} />
+  }
 }
 
 interface AlertCardProps {

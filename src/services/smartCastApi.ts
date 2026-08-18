@@ -58,3 +58,24 @@ export function getDeviceStatus(deviceId: string) {
     `/devices/${deviceId}/status`,
   )
 }
+export interface SensorAlert {
+  type: 'pressure' | 'humidity' | 'temperature' | 'movement'
+  severity: StatusLevel
+  title: string
+  message: string
+  value: number
+}
+
+export interface DeviceAlertsResponse {
+  success: boolean
+  deviceId: string
+  alertCount: number
+  alerts: SensorAlert[]
+  createdAt: string
+}
+
+export function getDeviceAlerts(deviceId: string) {
+  return request<DeviceAlertsResponse>(
+    `/devices/${deviceId}/alerts`,
+  )
+}
