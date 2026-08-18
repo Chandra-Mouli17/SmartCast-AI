@@ -7,9 +7,13 @@ import {
   Activity,
 } from 'lucide-react'
 import { useSmartCastData } from '../hooks/useSmartCastData'
+import { useSmartCastHealth } from '../hooks/useSmartCastHealth'
 
 function Home() {
   const { data, loading, error } = useSmartCastData()
+  const {
+  data: healthData,
+} = useSmartCastHealth()
 
   if (loading) {
     return (
@@ -56,12 +60,10 @@ function Home() {
         </div>
 
         <strong>
-          {status.level === 'normal'
-            ? '100%'
-            : status.level === 'warning'
-              ? '!'
-              : '!!'}
-        </strong>
+  {healthData
+    ? `${healthData.health.score}%`
+    : '--'}
+</strong>
       </div>
 
       <div className="home-heading">
