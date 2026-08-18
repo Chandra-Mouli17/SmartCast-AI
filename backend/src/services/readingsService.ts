@@ -54,3 +54,22 @@ export async function getSensorReadings(
 
   return data
 }
+export async function getRecentReadingsForTrend(
+  deviceId: string,
+  limit = 6,
+) {
+  const { data, error } = await supabase
+    .from('sensor_readings')
+    .select('*')
+    .eq('device_id', deviceId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    throw error
+  }
+
+  // Trend calculations need chronological order:
+  // oldest reading -> newest reading
+  return [...data].reverse()
+}
