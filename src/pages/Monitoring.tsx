@@ -1,5 +1,6 @@
 import { getSensorLevel } from '../utils/status'
 import { useSmartCastData } from '../hooks/useSmartCastData'
+import { useSmartCastTrends } from '../hooks/useSmartCastTrends'
 import {
   Activity,
   Battery,
@@ -13,6 +14,11 @@ import { mockDevice } from '../data/mockSensorData'
 
 function Monitoring() {
  const { data, loading, error } = useSmartCastData()
+ const {
+  data: trendData,
+  loading: trendsLoading,
+  error: trendsError,
+} = useSmartCastTrends()
 
 const pressure = data?.readings.pressure ?? 0
 const humidity = data?.readings.humidity ?? 0
@@ -78,7 +84,54 @@ const deviceConnected = !loading && !error && !!data
           level={getSensorLevel(movement, 70, 90)}
         />
       </div>
+            <div className="device-info">
+  <h2>SmartCast analysis</h2>
 
+  {trendsLoading && (
+    <p>Analyzing recent sensor readings...</p>
+  )}
+
+  {trendsError && (
+    <p>Unable to load sensor analysis.</p>
+  )}
+
+  {trendData && (
+    <>
+      <p>
+        Pressure trend:{' '}
+        <strong>{trendData.trends.pressure.direction}</strong>
+      </p>
+
+      <p>
+        Humidity trend:{' '}
+        <strong>{trendData.trends.humidity.direction}</strong>
+      </p>
+
+      <p>
+        Temperature trend:{' '}
+        <strong>{trendData.trends.temperature.direction}</strong>
+      </p>
+
+      <p>
+        Movement trend:{' '}
+        <strong>{trendData.trends.movement.direction}</strong>
+      </p>
+
+      <p>
+        Multi-sensor pattern:{' '}
+        <strong>
+          {trendData.anomaly.detected
+            ? trendData.anomaly.severity.toUpperCase()
+            : 'NORMAL'}
+        </strong>
+      </p>
+
+      <p>
+        {trendData.anomaly.explanation}
+      </p>
+    </>
+  )}
+</div>
       <div className="device-info">
         <h2>Device information</h2>
 
