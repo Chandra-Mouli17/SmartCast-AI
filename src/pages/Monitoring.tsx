@@ -1,4 +1,5 @@
 import { getSensorLevel } from '../utils/status'
+import { useSmartCastData } from '../hooks/useSmartCastData'
 import {
   Activity,
   Battery,
@@ -8,18 +9,17 @@ import {
   Signal,
   Thermometer,
 } from 'lucide-react'
-import {
-  mockSensorData,
-  mockDevice,
-} from '../data/mockSensorData'
+import { mockDevice } from '../data/mockSensorData'
 
 function Monitoring() {
-  const {
-    pressure,
-    humidity,
-    temperature,
-    movement,
-  } = mockSensorData
+ const { data, loading, error } = useSmartCastData()
+
+const pressure = data?.readings.pressure ?? 0
+const humidity = data?.readings.humidity ?? 0
+const temperature = data?.readings.temperature ?? 0
+const movement = data?.readings.movement ?? 0
+
+const deviceConnected = !loading && !error && !!data
 
   return (
     <div className="monitoring">
@@ -36,14 +36,14 @@ function Monitoring() {
       <div className="device-status">
         <span
           className={`device-dot ${
-            mockDevice.connected
+            deviceConnected
               ? 'connected'
               : 'disconnected'
           }`}
         />
 
         <strong>
-          {mockDevice.connected
+          {deviceConnected
             ? 'DEVICE CONNECTED'
             : 'DEVICE DISCONNECTED'}
         </strong>
@@ -110,8 +110,12 @@ function Monitoring() {
       </div>
 
       <p className="simulation-note">
-        Simulated data for development
-      </p>
+  {loading
+    ? 'Connecting to SmartCast...'
+    : error
+      ? 'Unable to connect to SmartCast backend'
+      : 'Live sensor data'}
+</p>
     </div>
   )
 }
