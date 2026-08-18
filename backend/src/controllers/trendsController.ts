@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { getRecentReadingsForTrend } from '../services/readingsService'
 import { calculateTrend } from '../utils/trends'
 import { calculateMovementScore } from '../utils/movement'
+import { detectMultiSensorAnomaly } from '../utils/anomaly'
 
 export async function getDeviceTrends(req: Request, res: Response) {
   const deviceId = req.params.deviceId
@@ -35,13 +36,27 @@ export async function getDeviceTrends(req: Request, res: Response) {
       ),
     )
 
-    const trends = {
-      pressure: calculateTrend(pressureValues, 5),
-      humidity: calculateTrend(humidityValues, 5),
-      temperature: calculateTrend(temperatureValues, 0.5),
-      movement: calculateTrend(movementValues, 10),
-    }
+   const trends = {
+  pressure: calculateTrend(pressureValues, 5),
+  humidity: calculateTrend(humidityValues, 5),
+  temperature: calculateTrend(temperatureValues, 0.5),
+  movement: calculateTrend(movementValues, 10),
+}
 
+const anomaly = detectMultiSensorAnomaly(
+  trends.pressure,
+  trends.humidity,
+  trends.temperature,
+  trends.movement,
+)
+
+return res.json({
+  success: true,
+  deviceId,
+  readingsAnalyzed: readings.length,
+  trends,
+  anomaly,
+})
     return res.json({
       success: true,
       deviceId,
