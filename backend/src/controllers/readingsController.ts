@@ -117,4 +117,4 @@ export async function getReadingHistory(req: Request, res: Response) {
       message: 'Failed to get sensor readings',
     })
   }
-}
+}   
