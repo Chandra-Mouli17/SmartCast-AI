@@ -3,6 +3,7 @@ import { getRecentReadingsForTrend } from '../services/readingsService'
 import { calculateTrend } from '../utils/trends'
 import { calculateMovementScore } from '../utils/movement'
 import { detectMultiSensorAnomaly } from '../utils/anomaly'
+import { detectPersistentHighReading } from '../utils/persistence'
 
 export async function getDeviceTrends(req: Request, res: Response) {
   const deviceId = req.params.deviceId
@@ -27,6 +28,11 @@ export async function getDeviceTrends(req: Request, res: Response) {
     const pressureValues = readings.map((reading) => reading.pressure)
     const humidityValues = readings.map((reading) => reading.humidity)
     const temperatureValues = readings.map((reading) => reading.temperature)
+    const persistence = {
+  pressure: detectPersistentHighReading(pressureValues, 85),
+  humidity: detectPersistentHighReading(humidityValues, 70),
+  temperature: detectPersistentHighReading(temperatureValues, 37.5),
+}
 
     const movementValues = readings.map((reading) =>
       calculateMovementScore(
@@ -56,6 +62,7 @@ return res.json({
   readingsAnalyzed: readings.length,
   trends,
   anomaly,
+  persistence,
 })
     return res.json({
       success: true,
