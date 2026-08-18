@@ -1,6 +1,8 @@
 import { getSensorLevel } from '../utils/status'
 import { useSmartCastData } from '../hooks/useSmartCastData'
 import { useSmartCastTrends } from '../hooks/useSmartCastTrends'
+import { useSmartCastHistory } from '../hooks/useSmartCastHistory'
+import SensorHistoryChart from '../components/SensorHistoryChart'
 import {
   Activity,
   Battery,
@@ -15,10 +17,16 @@ import { mockDevice } from '../data/mockSensorData'
 function Monitoring() {
  const { data, loading, error } = useSmartCastData()
  const {
+  data: historyData,
+  loading: historyLoading,
+  error: historyError,
+} = useSmartCastHistory()
+ const {
   data: trendData,
   loading: trendsLoading,
   error: trendsError,
 } = useSmartCastTrends()
+
 
 const pressure = data?.readings.pressure ?? 0
 const humidity = data?.readings.humidity ?? 0
@@ -156,6 +164,21 @@ const deviceConnected = !loading && !error && !!data
   </p>
 )}
     </>
+  )}
+</div>
+<div className="device-info">
+  <h2>Sensor history</h2>
+
+  {historyLoading && (
+    <p>Loading sensor history...</p>
+  )}
+
+  {historyError && (
+    <p>Unable to load sensor history.</p>
+  )}
+
+  {historyData && historyData.data.length > 0 && (
+    <SensorHistoryChart readings={historyData.data} />
   )}
 </div>
       <div className="device-info">
