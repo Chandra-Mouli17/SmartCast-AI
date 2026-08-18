@@ -144,3 +144,14 @@ export function getDeviceTrends(deviceId: string) {
     `/devices/${deviceId}/trends`,
   )
 }
+export interface DeviceReadingsResponse {
+  success: boolean
+  count: number
+  data: LatestSensorReading[]
+}
+
+export function getDeviceReadings(deviceId: string) {
+  return request<DeviceReadingsResponse>(
+    `/devices/${deviceId}/readings`,
+  )
+}
