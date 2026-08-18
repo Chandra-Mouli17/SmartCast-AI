@@ -7,6 +7,7 @@ import {
 import { getDeviceStatus } from '../controllers/statusController'
 import { getDeviceAlerts } from '../controllers/alertsController'
 import { getDeviceTrends } from '../controllers/trendsController'
+import { getDeviceHealth } from '../controllers/healthController'
 
 const router = Router()
 
@@ -16,5 +17,6 @@ router.get('/:deviceId/latest', getLatestReading)
 router.get('/:deviceId/status', getDeviceStatus)
 router.get('/:deviceId/alerts', getDeviceAlerts)
 router.get('/:deviceId/trends', getDeviceTrends)
+router.get('/:deviceId/health', getDeviceHealth)
 
 export default router
