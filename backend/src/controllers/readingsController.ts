@@ -6,6 +6,7 @@ import {
 import {
   saveSensorReading,
   getLatestSensorReading,
+  getSensorReadings,
 } from '../services/readingsService'
 
 export async function createReading(req: Request, res: Response) {
@@ -87,6 +88,33 @@ export async function getLatestReading(req: Request, res: Response) {
     return res.status(500).json({
       success: false,
       message: 'Failed to get latest sensor reading',
+    })
+  }
+}
+export async function getReadingHistory(req: Request, res: Response) {
+  const deviceId = req.params.deviceId
+
+  if (typeof deviceId !== 'string' || !deviceId.trim()) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid device ID',
+    })
+  }
+
+  try {
+    const readings = await getSensorReadings(deviceId)
+
+    return res.json({
+      success: true,
+      count: readings.length,
+      data: readings,
+    })
+  } catch (error) {
+    console.error('Failed to get sensor readings:', error)
+
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to get sensor readings',
     })
   }
 }

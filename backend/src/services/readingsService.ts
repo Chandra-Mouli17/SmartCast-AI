@@ -37,3 +37,20 @@ export async function getLatestSensorReading(deviceId: string) {
 
   return data
 }
+export async function getSensorReadings(
+  deviceId: string,
+  limit = 50,
+) {
+  const { data, error } = await supabase
+    .from('sensor_readings')
+    .select('*')
+    .eq('device_id', deviceId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    throw error
+  }
+
+  return data
+}
