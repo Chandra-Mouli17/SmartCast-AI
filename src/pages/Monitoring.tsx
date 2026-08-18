@@ -1,3 +1,4 @@
+import { getSensorLevel } from '../utils/status'
 import {
   Activity,
   Battery,
@@ -53,52 +54,28 @@ function Monitoring() {
           icon={<Gauge size={18} />}
           name="Pressure"
           value={`${pressure}%`}
-          level={
-            pressure >= 95
-              ? 'critical'
-              : pressure >= 85
-                ? 'warning'
-                : 'normal'
-          }
+          level={getSensorLevel(pressure, 85, 95)}
         />
 
         <MonitoringCard
           icon={<Droplets size={18} />}
           name="Humidity"
           value={`${humidity}%`}
-          level={
-            humidity >= 85
-              ? 'critical'
-              : humidity >= 70
-                ? 'warning'
-                : 'normal'
-          }
+          level={getSensorLevel(humidity, 70, 85)}
         />
 
         <MonitoringCard
           icon={<Thermometer size={18} />}
           name="Temperature"
           value={`${temperature}°C`}
-          level={
-            temperature >= 39
-              ? 'critical'
-              : temperature >= 37.5
-                ? 'warning'
-                : 'normal'
-          }
+          level={getSensorLevel(temperature, 37.5, 39)}
         />
 
         <MonitoringCard
           icon={<Activity size={18} />}
           name="Movement"
           value={movement < 40 ? 'Low' : 'High'}
-          level={
-            movement >= 90
-              ? 'critical'
-              : movement >= 70
-                ? 'warning'
-                : 'normal'
-          }
+          level={getSensorLevel(movement, 70, 90)}
         />
       </div>
 
@@ -121,7 +98,7 @@ function Monitoring() {
             <div>
               <span>Battery</span>
               <strong>
-                {mockDevice.battery}%
+                {mockDevice.battery}%   
               </strong>
             </div>
           </div>

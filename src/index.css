@@ -1023,3 +1023,58 @@ button {
 .sensor-level.critical span {
   font-weight: 800;
 }
+/* Device information */
+.device-info {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.device-info h2 {
+  margin: 0 0 16px;
+  font-size: 16px;
+}
+
+.device-info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.device-info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.device-info-item svg {
+  flex-shrink: 0;
+  color: var(--primary);
+}
+
+.device-info-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.device-info-item span {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.device-info-item strong {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.device-id {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+}
