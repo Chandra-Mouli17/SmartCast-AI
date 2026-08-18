@@ -100,3 +100,47 @@ export function getDeviceHealth(deviceId: string) {
     `/devices/${deviceId}/health`,
   )
 }
+export type TrendDirection = 'rising' | 'falling' | 'stable'
+
+export interface TrendResult {
+  direction: TrendDirection
+  change: number
+}
+
+export interface PersistenceResult {
+  persistent: boolean
+  consecutiveReadings: number
+  requiredReadings: number
+}
+
+export interface DeviceTrendsResponse {
+  success: boolean
+  deviceId: string
+  readingsAnalyzed: number
+
+  trends: {
+    pressure: TrendResult
+    humidity: TrendResult
+    temperature: TrendResult
+    movement: TrendResult
+  }
+
+  anomaly: {
+    detected: boolean
+    severity: 'normal' | 'warning' | 'critical'
+    sensors: string[]
+    explanation: string
+  }
+
+  persistence: {
+    pressure: PersistenceResult
+    humidity: PersistenceResult
+    temperature: PersistenceResult
+  }
+}
+
+export function getDeviceTrends(deviceId: string) {
+  return request<DeviceTrendsResponse>(
+    `/devices/${deviceId}/trends`,
+  )
+}
