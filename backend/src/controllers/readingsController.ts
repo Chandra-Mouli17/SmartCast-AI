@@ -3,19 +3,24 @@ import {
   SensorReading,
   SensorReadingInput,
 } from '../utils/sensorTypes'
+import {
+  saveSensorReading,
+  getLatestSensorReading,
+} from '../services/readingsService'
 
-export function createReading(req: Request, res: Response) {
-const deviceId = req.params.deviceId
+export async function createReading(req: Request, res: Response) {
+  const deviceId = req.params.deviceId
 
-if (typeof deviceId !== 'string' || !deviceId.trim()) {
-  return res.status(400).json({
-    success: false,
-    message: 'Invalid device ID',
-  })
-}  const body = req.body as SensorReadingInput
+  if (typeof deviceId !== 'string' || !deviceId.trim()) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid device ID',
+    })
+  }
+
+  const body = req.body as SensorReadingInput
 
   if (
-    
     typeof body.pressure !== 'number' ||
     typeof body.humidity !== 'number' ||
     typeof body.temperature !== 'number' ||
@@ -34,9 +39,54 @@ if (typeof deviceId !== 'string' || !deviceId.trim()) {
     ...body,
   }
 
-  return res.status(201).json({
-    success: true,
-    message: 'Sensor reading received',
-    data: reading,
-  })
+  try {
+    const savedReading = await saveSensorReading(reading)
+
+    return res.status(201).json({
+      success: true,
+      message: 'Sensor reading saved',
+      data: savedReading,
+    })
+  } catch (error) {
+    console.error('Failed to save sensor reading:', error)
+
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to save sensor reading',
+    })
+  }
+}
+
+export async function getLatestReading(req: Request, res: Response) {
+  const deviceId = req.params.deviceId
+
+  if (typeof deviceId !== 'string' || !deviceId.trim()) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid device ID',
+    })
+  }
+
+  try {
+    const reading = await getLatestSensorReading(deviceId)
+
+    if (!reading) {
+      return res.status(404).json({
+        success: false,
+        message: 'No sensor readings found',
+      })
+    }
+
+    return res.json({
+      success: true,
+      data: reading,
+    })
+  } catch (error) {
+    console.error('Failed to get latest sensor reading:', error)
+
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to get latest sensor reading',
+    })
+  }
 }
