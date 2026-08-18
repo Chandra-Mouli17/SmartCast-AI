@@ -129,6 +129,32 @@ const deviceConnected = !loading && !error && !!data
       <p>
         {trendData.anomaly.explanation}
       </p>
+      {trendData.persistence.temperature.persistent && (
+  <p>
+    <strong>Persistent temperature:</strong>{' '}
+    Temperature has remained elevated for{' '}
+    {trendData.persistence.temperature.consecutiveReadings}{' '}
+    consecutive readings.
+  </p>
+)}
+
+{trendData.persistence.pressure.persistent && (
+  <p>
+    <strong>Persistent pressure:</strong>{' '}
+    Pressure has remained elevated for{' '}
+    {trendData.persistence.pressure.consecutiveReadings}{' '}
+    consecutive readings.
+  </p>
+)}
+
+{trendData.persistence.humidity.persistent && (
+  <p>
+    <strong>Persistent humidity:</strong>{' '}
+    Humidity has remained elevated for{' '}
+    {trendData.persistence.humidity.consecutiveReadings}{' '}
+    consecutive readings.
+  </p>
+)}
     </>
   )}
 </div>
