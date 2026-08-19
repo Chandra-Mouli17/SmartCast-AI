@@ -3,27 +3,88 @@ import {
   CheckCircle,
   Cpu,
   LogOut,
+  Mail,
   User,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import {
+  getCurrentUser,
+  updateUserName,
+} from '../services/authService'
+import { useSmartCastData } from '../hooks/useSmartCastData'
 
 interface ProfileProps {
   onLogout: () => void
 }
 
 function Profile({ onLogout }: ProfileProps) {
-  const [patientName, setPatientName] =
-    useState('Patient Name')
+  const [patientName, setPatientName] = useState('')
+  const [email, setEmail] = useState('')
+  const [patientId, setPatientId] = useState('')
+  const [isEditing, setIsEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
 
-  const [patientId] =
-    useState('SC-P001')
+  const {
+    simulatorRunning,
+  } = useSmartCastData()
 
-  const [castId] =
-    useState('SC-CAST-001')
+  const castId = 'SC-CAST-001'
 
-  const [isEditing, setIsEditing] =
-    useState(false)
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const user = await getCurrentUser()
+
+        if (!user) {
+          return
+        }
+
+        setEmail(user.email ?? '')
+
+        setPatientName(
+          user.user_metadata?.full_name ||
+            user.email?.split('@')[0] ||
+            'SmartCast Patient',
+        )
+
+        setPatientId(
+          `SC-${user.id.slice(0, 8).toUpperCase()}`,
+        )
+      } catch (error) {
+        console.error(
+          'Failed to load user profile:',
+          error,
+        )
+      }
+    }
+
+    loadProfile()
+  }, [])
+
+  async function handleEdit() {
+    if (!isEditing) {
+      setIsEditing(true)
+      return
+    }
+
+    try {
+      setSaving(true)
+
+      await updateUserName(
+        patientName.trim(),
+      )
+
+      setIsEditing(false)
+    } catch (error) {
+      console.error(
+        'Failed to update patient name:',
+        error,
+      )
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <div className="profile">
@@ -48,7 +109,9 @@ function Profile({ onLogout }: ProfileProps) {
               className="profile-name-input"
               value={patientName}
               onChange={(event) =>
-                setPatientName(event.target.value)
+                setPatientName(
+                  event.target.value,
+                )
               }
               autoFocus
             />
@@ -56,17 +119,32 @@ function Profile({ onLogout }: ProfileProps) {
             <h2>{patientName}</h2>
           )}
 
-          <p>Patient ID: {patientId}</p>
+          <p>
+            Patient ID: {patientId}
+          </p>
         </div>
 
         <button
           className="profile-edit-button"
-          onClick={() =>
-            setIsEditing((current) => !current)
-          }
+          onClick={handleEdit}
+          disabled={saving}
         >
-          {isEditing ? 'Save' : 'Edit'}
+          {saving
+            ? 'Saving...'
+            : isEditing
+              ? 'Save'
+              : 'Edit'}
         </button>
+      </div>
+
+      <div className="profile-section">
+        <h2>Account information</h2>
+
+        <InfoRow
+          icon={<Mail size={17} />}
+          label="Email"
+          value={email || '--'}
+        />
       </div>
 
       <div className="profile-section">
@@ -87,15 +165,19 @@ function Profile({ onLogout }: ProfileProps) {
         <InfoRow
           icon={<CheckCircle size={17} />}
           label="Device status"
-          value="Connected"
-          status
+          value={
+            simulatorRunning
+              ? 'Connected'
+              : 'Disconnected'
+          }
+          status={simulatorRunning}
         />
       </div>
 
       <button
-  className="logout-button"
-  onClick={onLogout}
->
+        className="logout-button"
+        onClick={onLogout}
+      >
         <LogOut size={16} />
         Sign out
       </button>

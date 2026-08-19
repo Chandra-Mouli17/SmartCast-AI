@@ -1,14 +1,80 @@
-import { ArrowRight, LockKeyhole, User } from 'lucide-react'
+import { useState } from 'react'
+import {
+  ArrowRight,
+  LockKeyhole,
+  Mail,
+} from 'lucide-react'
+import {
+  loginUser,
+  signUpUser,
+} from '../services/authService'
 
 interface LoginProps {
   onLogin: () => void
 }
 
 function Login({ onLogin }: LoginProps) {
+  const [mode, setMode] =
+    useState<'login' | 'signup'>('login')
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+
+    setLoading(true)
+    setError('')
+    setMessage('')
+
+    try {
+      if (mode === 'signup') {
+        const result = await signUpUser(
+          email.trim(),
+          password,
+        )
+
+        if (result.session) {
+          onLogin()
+          return
+        }
+
+        setMessage(
+          'Account created successfully. Please check your email to confirm your account.',
+        )
+
+        setMode('login')
+        setPassword('')
+      } else {
+        await loginUser(
+          email.trim(),
+          password,
+        )
+
+        onLogin()
+      }
+    } catch (err) {
+      console.error('Authentication failed:', err)
+
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError('Authentication failed. Please try again.')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="login">
       <div className="login-logo">
-        {/* Your SmartCast logo will go here */}
         <div className="logo-placeholder">
           SC
         </div>
@@ -17,32 +83,42 @@ function Login({ onLogin }: LoginProps) {
       </div>
 
       <div className="login-heading">
-        <p className="eyebrow">PATIENT PORTAL</p>
+        <p className="eyebrow">
+          PATIENT PORTAL
+        </p>
 
-        <h1>Welcome back</h1>
+        <h1>
+          {mode === 'login'
+            ? 'Welcome back'
+            : 'Create account'}
+        </h1>
 
         <p>
-          Monitor your cast with confidence.
+          {mode === 'login'
+            ? 'Monitor your cast with confidence.'
+            : 'Create your SmartCast patient account.'}
         </p>
       </div>
 
       <form
         className="login-form"
-        onSubmit={(event) => {
-          event.preventDefault()
-          onLogin()
-        }}
+        onSubmit={handleSubmit}
       >
         <label>
-          Patient ID
+          Email
         </label>
 
         <div className="input-wrapper">
-          <User size={16} />
+          <Mail size={16} />
 
           <input
-            type="text"
-            placeholder="Enter your patient ID"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(event) =>
+              setEmail(event.target.value)
+            }
+            required
           />
         </div>
 
@@ -55,24 +131,65 @@ function Login({ onLogin }: LoginProps) {
 
           <input
             type="password"
-            placeholder="Enter your password"
+            placeholder={
+              mode === 'login'
+                ? 'Enter your password'
+                : 'Create a password'
+            }
+            value={password}
+            onChange={(event) =>
+              setPassword(event.target.value)
+            }
+            required
           />
         </div>
+
+        {error && (
+          <p className="login-note">
+            {error}
+          </p>
+        )}
+
+        {message && (
+          <p className="login-note">
+            {message}
+          </p>
+        )}
 
         <button
           type="submit"
           className="login-button"
+          disabled={loading}
         >
-          Login
-          <ArrowRight size={16} />
+          {loading
+            ? 'Please wait...'
+            : mode === 'login'
+              ? 'Login'
+              : 'Create account'}
+
+          {!loading && (
+            <ArrowRight size={16} />
+          )}
         </button>
       </form>
 
       <button
+        type="button"
         className="skip-button"
-        onClick={onLogin}
+        onClick={() => {
+          setMode(
+            mode === 'login'
+              ? 'signup'
+              : 'login',
+          )
+
+          setError('')
+          setMessage('')
+        }}
       >
-        Skip for now
+        {mode === 'login'
+          ? 'New user? Sign up'
+          : 'Already have an account? Login'}
       </button>
 
       <p className="login-note">
