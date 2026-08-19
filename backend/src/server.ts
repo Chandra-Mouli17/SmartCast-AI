@@ -17,6 +17,6 @@ app.use(express.json())
 app.use('/api/health', healthRoutes)
 app.use('/api/devices', deviceRoutes)
 app.use('/api/simulator', simulatorRoutes)
-app.listen(PORT, () => {
+app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`SmartCast AI backend running on port ${PORT}`)
 })
