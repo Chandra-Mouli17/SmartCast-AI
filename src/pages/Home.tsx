@@ -10,28 +10,123 @@ import { useSmartCastData } from '../hooks/useSmartCastData'
 import { useSmartCastHealth } from '../hooks/useSmartCastHealth'
 
 function Home() {
-  const { data, loading, error } = useSmartCastData()
   const {
-  data: healthData,
-} = useSmartCastHealth()
+    data,
+    loading,
+    error,
+    simulatorRunning,
+    simulatorStarting,
+  } = useSmartCastData()
 
-  if (loading) {
+  const {
+    data: healthData,
+  } = useSmartCastHealth()
+
+  // Simulator is starting
+  if (simulatorStarting) {
     return (
       <div className="home">
+        <div className="status-ring">
+          <div className="status-icon">
+            <span className="status-symbol">...</span>
+          </div>
+
+          <strong>--</strong>
+        </div>
+
         <div className="home-heading">
-          <h1>Connecting to SmartCast...</h1>
-          <p>Loading live sensor data.</p>
+          <h1>SmartCast starting...</h1>
+
+          <p>
+            Monitoring will begin in a few seconds.
+          </p>
         </div>
       </div>
     )
   }
 
+  // Simulator is OFF
+  if (!simulatorRunning) {
+    return (
+      <div className="home">
+        <div className="status-ring">
+          <div className="status-icon">
+            <span className="status-symbol">--</span>
+          </div>
+
+          <strong>--</strong>
+        </div>
+
+        <div className="home-heading">
+          <h1>Monitoring is off</h1>
+
+          <p>
+            Press Enter to start SmartCast monitoring.
+          </p>
+
+          <span className="healthy-badge">
+            Device disconnected
+          </span>
+        </div>
+
+        <div className="sensor-list">
+          <Sensor
+            icon={<Gauge size={16} />}
+            name="Pressure"
+            value="--"
+            level="normal"
+          />
+
+          <Sensor
+            icon={<Droplets size={16} />}
+            name="Humidity"
+            value="--"
+            level="normal"
+          />
+
+          <Sensor
+            icon={<Thermometer size={16} />}
+            name="Temperature"
+            value="--"
+            level="normal"
+          />
+
+          <Sensor
+            icon={<Activity size={16} />}
+            name="Movement"
+            value="--"
+            level="normal"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // Simulator is ON but data is loading
+  if (loading) {
+    return (
+      <div className="home">
+        <div className="home-heading">
+          <h1>Connecting to SmartCast...</h1>
+
+          <p>
+            Loading live sensor data.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  // Backend error
   if (error || !data) {
     return (
       <div className="home">
         <div className="home-heading">
           <h1>Unable to connect</h1>
-          <p>SmartCast backend is currently unavailable.</p>
+
+          <p>
+            SmartCast backend is currently unavailable.
+          </p>
         </div>
       </div>
     )
@@ -60,10 +155,10 @@ function Home() {
         </div>
 
         <strong>
-  {healthData
-    ? `${healthData.health.score}%`
-    : '--'}
-</strong>
+          {healthData
+            ? `${healthData.health.score}%`
+            : '--'}
+        </strong>
       </div>
 
       <div className="home-heading">
@@ -169,25 +264,27 @@ function Sensor({
       <div className="sensor-status">
         <strong>{value}</strong>
 
-        <span className={`sensor-level ${level}`}>
-          {level === 'normal' && (
-            <>
-              Normal <Check size={12} />
-            </>
-          )}
+        {value !== '--' && (
+          <span className={`sensor-level ${level}`}>
+            {level === 'normal' && (
+              <>
+                Normal <Check size={12} />
+              </>
+            )}
 
-          {level === 'warning' && (
-            <>
-              Attention <span>!</span>
-            </>
-          )}
+            {level === 'warning' && (
+              <>
+                Attention <span>!</span>
+              </>
+            )}
 
-          {level === 'critical' && (
-            <>
-              Critical <span>!</span>
-            </>
-          )}
-        </span>
+            {level === 'critical' && (
+              <>
+                Critical <span>!</span>
+              </>
+            )}
+          </span>
+        )}
       </div>
     </div>
   )

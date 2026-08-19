@@ -5,10 +5,11 @@ import Monitoring from './pages/Monitoring'
 import Alerts from './pages/Alerts'
 import Profile from './pages/Profile'
 import Login from './pages/Login'
+import { useSimulatorControl } from './hooks/useSimulatorControl'
 type Page = 'login' | 'home' | 'monitoring' | 'alerts' | 'profile'
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('login')
-
+ useSimulatorControl()
   const [theme, setTheme] =
     useState<'dark' | 'light'>('dark')
 

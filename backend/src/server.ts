@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import healthRoutes from './routes/healthRoutes'
 import deviceRoutes from './routes/deviceRoutes'
+import simulatorRoutes from './routes/simulatorRoutes'
 
 dotenv.config()
 
@@ -15,7 +16,7 @@ app.use(express.json())
 
 app.use('/api/health', healthRoutes)
 app.use('/api/devices', deviceRoutes)
-
+app.use('/api/simulator', simulatorRoutes)
 app.listen(PORT, () => {
   console.log(`SmartCast AI backend running on port ${PORT}`)
 })

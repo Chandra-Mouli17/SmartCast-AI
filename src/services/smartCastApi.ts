@@ -155,3 +155,27 @@ export function getDeviceReadings(deviceId: string) {
     `/devices/${deviceId}/readings`,
   )
 }
+export interface SimulatorStatusResponse {
+  success: boolean
+  state: 'off' | 'starting' | 'running'
+  running: boolean
+  starting: boolean
+}
+
+export function toggleSimulator() {
+  return fetch(`${API_BASE_URL}/simulator/toggle`, {
+    method: 'POST',
+  }).then(async (response) => {
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status}`)
+    }
+
+    return response.json() as Promise<SimulatorStatusResponse>
+  })
+}
+
+export function getSimulatorStatus() {
+  return request<SimulatorStatusResponse>(
+    '/simulator/status',
+  )
+}
