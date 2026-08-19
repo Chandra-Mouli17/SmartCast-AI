@@ -60,9 +60,9 @@ function Home() {
         <div className="home-heading">
           <h1>Monitoring is off</h1>
 
-          <p>
-            Press Enter to start SmartCast monitoring.
-          </p>
+         <p>
+         SmartCast monitoring is currently inactive.
+        </p>
 
           <span className="healthy-badge">
             Device disconnected
@@ -162,9 +162,13 @@ function Home() {
       </div>
 
       <div className="home-heading">
-        <h1>{status.title}</h1>
+  <h1>{status.title}</h1>
 
-        <p>{status.message}</p>
+  <p>
+    SmartCast monitoring is currently active.
+  </p>
+
+  <p>{status.message}</p>
 
         <span className={`healthy-badge ${status.level}`}>
           {status.level === 'normal' ? (
